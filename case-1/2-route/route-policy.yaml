@@ -1,0 +1,65 @@
+apiVersion: traffic.ferryproxy.io/v1alpha2
+kind: RoutePolicy
+metadata:
+  name: ferry-web-0
+  namespace: ferry-system
+spec:
+  exports:
+  - hubName: control-plane
+    service:
+      labels:
+        traffic.ferryproxy.io/export: "true"
+  imports:
+  - hubName: cluster-1
+  - hubName: cluster-2
+---
+apiVersion: traffic.ferryproxy.io/v1alpha2
+kind: RoutePolicy
+metadata:
+  name: ferry-web-1
+  namespace: ferry-system
+spec:
+  exports:
+  - hubName: cluster-1
+    service:
+      labels:
+        traffic.ferryproxy.io/export: "true"
+  imports:
+  - hubName: control-plane
+  - hubName: cluster-2
+---
+apiVersion: traffic.ferryproxy.io/v1alpha2
+kind: RoutePolicy
+metadata:
+  name: ferry-web-2
+  namespace: ferry-system
+spec:
+  exports:
+  - hubName: cluster-2
+    service:
+      labels:
+        traffic.ferryproxy.io/export: "true"
+  imports:
+  - hubName: control-plane
+  - hubName: cluster-1
+---
+apiVersion: traffic.ferryproxy.io/v1alpha2
+kind: RoutePolicy
+metadata:
+  name: ferry-web-sum
+  namespace: ferry-system
+spec:
+  exports:
+  - hubName: cluster-2
+    service:
+      namespace: default
+      name: web-2
+  - hubName: cluster-1
+    service:
+      namespace: default
+      name: web-1
+  imports:
+  - hubName: control-plane
+    service:
+      namespace: default
+      name: web-lb
